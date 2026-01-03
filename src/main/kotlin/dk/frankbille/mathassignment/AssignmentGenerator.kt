@@ -7,34 +7,27 @@ import kotlin.random.Random
 @Service
 class AssignmentGenerator {
     fun generate(add: Int, sub: Int, mul: Int, div: Int, seed: Long): Assignment {
-        val random = Random(seed)
-
         return Assignment(
             sections = listOf(
-                Section(
-                    heading = "Addition (plus)",
-                    problems = createProblems(add) { SimpleAdditionEquation(random) }
-                ),
-                Section(
-                    heading = "Substraction (minus)",
-                    problems = createProblems(sub) { SimpleSubtractionEquation(random) }
-                ),
-                Section(
-                    heading = "Multiplikation (gange)",
-                    problems = createProblems(mul) { SimpleMultiplicationEquation(random) }
-                ),
-                Section(
-                    heading = "Division (dividere)",
-                    problems = createProblems(div) { SimpleDivisionEquation(random) }
-                ),
+                createSection(seed, add, "Addition (plus)") { SimpleAdditionEquation(it) },
+                createSection(seed, sub, "Substraction (minus)") { SimpleSubtractionEquation(it) },
+                createSection(seed, mul, "Multiplikation (gange)") { SimpleMultiplicationEquation(it) },
+                createSection(seed, div, "Division (dividere)") { SimpleDivisionEquation(it) },
             )
         )
     }
 
-    private fun createProblems(count: Int, problemGenerator: () -> Problem): List<Problem> {
+    private fun createSection(seed: Long, count: Int, heading: String, problemGenerator: (random: Random) -> Problem) =
+        Section(
+            heading = heading,
+            problems = createProblems(seed, count, problemGenerator)
+        )
+
+    private fun createProblems(seed: Long, count: Int, problemGenerator: (random: Random) -> Problem): List<Problem> {
+        val random = Random(seed)
         val problems = mutableSetOf<Problem>()
         do {
-            problems.add(problemGenerator())
+            problems.add(problemGenerator(random))
         } while (problems.size < count)
         return problems.toList()
     }
