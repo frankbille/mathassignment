@@ -6,13 +6,13 @@ import kotlin.random.Random
 
 @Service
 class AssignmentGenerator {
-    fun generate(add: Int, sub: Int, mul: Int, div: Int, seed: Long): Assignment {
-        return Assignment(
+    fun generate(mathAssignmentConfig: MathAssignmentConfig) = with(mathAssignmentConfig) {
+        Assignment(
             sections = listOf(
-                createSection(seed, add, "Addition (plus)") { SimpleAdditionEquation(it) },
-                createSection(seed, sub, "Substraction (minus)") { SimpleSubtractionEquation(it) },
-                createSection(seed, mul, "Multiplikation (gange)") { SimpleMultiplicationEquation(it) },
-                createSection(seed, div, "Division (dividere)") { SimpleDivisionEquation(it) },
+                createSection(seed, simpleAdditionEquationCount, "Addition (plus)") { SimpleAdditionEquation(it, randomSimpleAdditionEquationLevel(it)) },
+                createSection(seed, simpleSubtractionEquationCount, "Substraction (minus)") { SimpleSubtractionEquation(it, randomSimpleSubtractionEquationLevel(it)) },
+                createSection(seed, simpleMultiplicationEquationCount, "Multiplikation (gange)") { SimpleMultiplicationEquation(it, randomSimpleMultiplicationEquationLevel(it)) },
+                createSection(seed, simpleDivisionEquationCount, "Division (dividere)") { SimpleDivisionEquation(it, randomSimpleDivisionEquationLevel(it)) },
             )
         )
     }

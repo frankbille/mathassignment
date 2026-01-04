@@ -8,13 +8,14 @@ import com.vaadin.flow.server.streams.DownloadHandler
 import com.vaadin.flow.server.streams.DownloadResponse
 import dk.frankbille.mathassignment.AssignmentGenerator
 import dk.frankbille.mathassignment.TexTemplateService
+import dk.frankbille.mathassignment.model.MathAssignmentConfig
 import org.springframework.beans.factory.annotation.Autowired
 import java.io.ByteArrayInputStream
 
 
 @Route
 @PageTitle("Math Assignment")
-class MainView() : KComposite() {
+class MainView : KComposite() {
 
     @Autowired
     private lateinit var assignmentGenerator: AssignmentGenerator
@@ -22,6 +23,7 @@ class MainView() : KComposite() {
     @Autowired
     private lateinit var texTemplateService: TexTemplateService
 
+    @Suppress("unused")
     private val root = ui {
         verticalLayout {
             val hiddenDownload = anchor {
@@ -34,7 +36,7 @@ class MainView() : KComposite() {
             add(hiddenWrapper)
 
             val mathAssignmentForm = MathAssignmentForm()
-            mathAssignmentForm.setMathAssignmentData(MathAssignmentData())
+            mathAssignmentForm.setMathAssignmentConfig(MathAssignmentConfig())
             add(mathAssignmentForm)
 
             verticalLayout {
@@ -42,14 +44,8 @@ class MainView() : KComposite() {
 
                 button("Create") {
                     onClick {
-                        with(mathAssignmentForm.getMathAssignmentData()!!) {
-                            val assignment = assignmentGenerator.generate(
-                                simpleAdditionEquationCount,
-                                simpleSubtractionEquationCount,
-                                simpleMultiplicationEquationCount,
-                                simpleDivisionEquationCount,
-                                seed
-                            )
+                        with(mathAssignmentForm.getMathAssignmentConfig()!!) {
+                            val assignment = assignmentGenerator.generate(this)
 
                             val tex = texTemplateService.render(
                                 templateName = "assignment.tex.ftl",
