@@ -111,3 +111,12 @@ jobs:
               -t "$IMAGE:$TAG" \
               "${IMAGES[@]}"
           fi
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [ manifest ]
+
+    steps:
+      - name: Trigger deployment on Coolify
+        run: |
+          curl --request GET "${% raw %}{{ secrets.COOLIFY_WEBHOOK }}{% endraw %}" --header "Authorization: Bearer ${% raw %}{{ secrets.COOLIFY_TOKEN }}{% endraw %}"
